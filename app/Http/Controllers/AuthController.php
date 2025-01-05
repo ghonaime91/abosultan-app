@@ -60,7 +60,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'خطأ في البيانات المدخلة',
-                'errors' => $e->errors() // Return the validation errors
+                'errors' => $e->errors() 
             ], 422);
 
         } catch (\Exception $e) {
