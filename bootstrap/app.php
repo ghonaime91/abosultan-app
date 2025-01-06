@@ -18,24 +18,16 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         
+        # Redirect guests to login page
         $middleware->redirectGuestsTo(function (Request $request) {
-         
-              
-                if ($request->is('api/*')) {
-                    return response()->json([
-                        'error' => true,
-                        'message' => 'يجب تسجيل الدخول أولاً'
-                    ], 401);
-                } else {
-                    return route('login');
-                }
-
+            if ($request->is('api/*')) 
+                return route('login');
         });
-
-
 
     })
     ->withExceptions(function (Exceptions $exceptions) {
+
+        # Handle 404 not found exception
         $exceptions->render(function (NotFoundHttpException $e, Request $request)
         {
             if ($request->is('api/*')) {
@@ -46,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }             
         });
 
+        # Handle 405 method not allowed exception
         $exceptions->render(function (MethodNotAllowedHttpException $e, Request $request)
         {
             if ($request->is('api/*')) {
@@ -56,7 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }             
         });
 
-
+        # Handle authentication exception
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
@@ -66,6 +59,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
+        # Handle general exceptions
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([

@@ -10,10 +10,13 @@ Route::get('/user', function (Request $request) {
 
 
 # Register a new user route
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register'])
+    ->name('register');
 
 # Login route
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login');
 
 # Logout route
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])
+    ->name('logout');
