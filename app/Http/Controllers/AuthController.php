@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -43,13 +44,16 @@ class AuthController extends Controller
                 'password' => bcrypt($fields['password'])
             ]);
 
+            // Send email verification notification
+            event(new Registered($user));
+
             // Create the token
             $token = $user->createToken('abosultanApp')->plainTextToken;
 
             // Prepare the response
             $response = [
                 'success' => true,
-                'message' => 'تم تسجيل حساب جديد بنجاح',
+                'message' => 'تم تسجيل حساب جديد بنجاح. يرجى التحقق من بريدك الإلكتروني.',
                 'user' => $user,
                 'token' => $token
             ];
