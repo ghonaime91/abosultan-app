@@ -17,12 +17,14 @@ class AuthController extends Controller
             // Validate the input data
             $fields = $request->validate([
                 'name' => 'required|string',
+
                 'email' => [
                     'required',
                     'string',
                     'unique:users,email',
                     'regex:/^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,10}$/'
                     ],
+                    
                 'password' => [
                     'required',
                     'string',
