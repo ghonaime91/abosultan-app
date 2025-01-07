@@ -31,11 +31,15 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     $user = User::find($request->id);
     $expires = $request->expires;
     $signature = $request->signature;
-    if (!Hash::check($signature, $user->email_verification_hash . $expires)) {
-        return response()->json(['message' => 'خطأ في رمز التحقق'], 401);
+    try {
+        if (!Hash::check($signature, $user->email_verification_hash . $expires)) {
+            throw new Exception('خطأ في رمز التحقق');
+        }
+        $request->fulfill();
+        return response()->json(['message' => 'تم التحقق من بريدك الإلكتروني بنجاح.']);
+    } catch (Exception $e) {
+        return response()->json(['error' => true, 'message' => $e->getMessage()], 401);
     }
-    $request->fulfill();
-    return response()->json(['message' => 'تم التحقق من بريدك الإلكتروني بنجاح.']);
 })->middleware(['signed'])->name('verification.verify');
 
 # Login route
