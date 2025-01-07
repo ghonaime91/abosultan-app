@@ -72,9 +72,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/password/email', [PasswordController::class, 'sendResetLinkEmail'])
     ->name('password.reset');
 
-    Route::post('/password/reset', [PasswordController::class, 'resetPassword'])
-    ->name('password.update');
 });
 
 Route::get('/password/email', [PasswordController::class, 'viewResetForm'])
 ->name('password.reset');
+
+Route::post('/password/reset', [PasswordController::class, 'resetPassword'])
+->name('password.update');
