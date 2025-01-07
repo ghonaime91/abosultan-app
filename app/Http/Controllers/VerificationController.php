@@ -57,9 +57,6 @@ class VerificationController extends Controller
     {
         try {
 
-            // Find the user using the provided ID
-            $user = User::findOrFail($request->id);
-
             // Send the email verification notification
             $request->user()->sendEmailVerificationNotification();
 
