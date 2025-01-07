@@ -40,9 +40,13 @@ class AuthController extends Controller
 
             // Create the user
             $user = User::create([
+
                 'name' => $fields['name'],
+
                 'email' => $fields['email'],
+
                 'password' => bcrypt($fields['password'])
+
             ]);
 
             // Send email verification notification
@@ -53,9 +57,13 @@ class AuthController extends Controller
 
             // Prepare the response
             $response = [
+
                 'success' => true,
+
                 'message' => 'تم تسجيل حساب جديد بنجاح. يرجى التحقق من بريدك الإلكتروني.',
+
                 'user' => $user,
+
                 'token' => $token
             ];
 
@@ -65,18 +73,26 @@ class AuthController extends Controller
 
             // In case of validation errors, return the validation errors
             return response()->json([
+
                 'success' => false,
+
                 'message' => 'خطأ في البيانات المدخلة',
-                'errors' => $e->errors() 
+
+                'errors' => $e->errors()
+                
             ], 422);
 
         } catch (\Exception $e) {
 
             // In case of any other error, return a general error response
             return response()->json([
+
                 'success' => false,
+
                 'message' => 'خطأ في الخادم',
+
                 'error' => $e->getMessage()
+
             ], 500);
 
         }
@@ -90,8 +106,11 @@ class AuthController extends Controller
         try {
             // Validate the input data
             $fields = $request->validate([
+
                 'email' => 'required|string|email',
+
                 'password' => 'required|string',
+
             ]);
 
             // Check if the user exists
@@ -100,9 +119,13 @@ class AuthController extends Controller
             if (!$user || !Hash::check($fields['password'], $user->password)) {
                 // Return error response if user not found or password incorrect
                 return response()->json([
+
                     'success' => false,
+
                     'message' => 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+
                 ], 401);
+
             }
 
             // Create the token
@@ -110,10 +133,15 @@ class AuthController extends Controller
 
             // Prepare the response
             $response = [
+
                 'success' => true,
+
                 'message' => 'تم تسجيل الدخول بنجاح',
+
                 'user' => $user,
+
                 'token' => $token
+
             ];
 
             return response($response, 200);
@@ -122,18 +150,26 @@ class AuthController extends Controller
 
             // In case of validation errors, return the validation errors
             return response()->json([
+
                 'success' => false,
+
                 'message' => 'خطأ في البيانات المدخلة',
+
                 'errors' => $e->errors() 
+
             ], 422);
         
         } catch (\Exception $e) {
 
             // In case of any other error, return a general error response
             return response()->json([
+
                 'success' => false,
+
                 'message' => 'خطأ في الخادم',
+
                 'error' => $e->getMessage()
+
             ], 500);
         }
     }
@@ -149,17 +185,24 @@ class AuthController extends Controller
 
             // Prepare the response
             return response()->json([
+
                 'success' => true,
+
                 'message' => 'تم تسجيل الخروج بنجاح'
+
             ], 200);
             
         } catch (\Exception $e) {
 
             // In case of any error, return a general error response
             return response()->json([
+
                 'success' => false,
+
                 'message' => 'خطأ في الخادم',
+
                 'error' => $e->getMessage()
+                
             ], 500);
         }
     }

@@ -14,6 +14,25 @@ use App\Http\Controllers\VerificationController;
 Route::post('/register', [AuthController::class, 'register'])
     ->name('register');
 
+# Login route
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login');
+
+# Logout route
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])
+    ->name('logout');
+
+/**
+ * Auth routes end
+ */
+
+######################################################
+######################################################
+
+/**
+ * Verification routes start
+ */
+
 # Verify email routes
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -34,11 +53,9 @@ Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verifyE
     ->middleware(['signed'])
     ->name('verification.verify');
 
-# Login route
-Route::post('/login', [AuthController::class, 'login'])
-    ->name('login');
+/**
+ * Verification routes end
+ */
 
-# Logout route
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])
-    ->name('logout');
-
+######################################################
+######################################################
