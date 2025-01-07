@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\PasswordController;
 
 
 /**
@@ -59,3 +60,19 @@ Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verifyE
 
 ######################################################
 ######################################################
+
+/**
+ * Reset password routes start
+ */
+
+# Reset password routes
+Route::middleware('auth:sanctum')->group(function () {
+
+    # Reset password routes
+    Route::post('/password/email', [PasswordController::class, 'sendResetLinkEmail'])
+    ->name('password.email');
+
+ 
+    Route::post('/password/reset', [PasswordController::class, 'resetPassword'])
+    ->name('password.update');
+});
