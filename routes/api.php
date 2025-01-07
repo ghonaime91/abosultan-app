@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Verified;
 
 /**
  * Auth routes start
@@ -30,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     try {
-        $user = User::where('id', $request->route('id'))->first();
+        $user = User::find($request->route('id'));
         // التحقق إذا كان المستخدم موجودًا
         if (!$user) {
             return response()->json([
@@ -47,8 +49,19 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
             ], 400);
         }
 
+        // تسجيل دخول المستخدم مؤقتًا
+        Auth::login($user);
+
         // تنفيذ التحقق
-        $request->fulfill();
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'بريدك الإلكتروني تم التحقق منه مسبقًا.'
+            ]);
+        }
+
+        $user->markEmailAsVerified();
+        event(new Verified($user));
 
         return response()->json([
             'success' => true,
@@ -71,6 +84,3 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
-/**
- * Auth routes end
- */
