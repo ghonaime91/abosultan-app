@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class AuthController extends Controller
 {
@@ -161,5 +164,47 @@ class AuthController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function showVerificationNotice()
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'يرجى التحقق من بريدك الإلكتروني.'
+        ], 403);
+    }
+
+    public function sendVerificationNotification(Request $request)
+    {
+        $request->user()->sendEmailVerificationNotification();
+        return response()->json([
+            'success' => true,
+            'message' => 'تم إرسال رابط التحقق!'
+        ], 200);
+    }
+
+    public function verifyEmail(EmailVerificationRequest $request)
+    {
+        $user = User::findOrFail($request->route('id'));
+
+        if ($user->email_verified_at) {
+            return response()->json([
+                'success' => false,
+                'message' => 'البريد الإلكتروني مفعل بالفعل.'
+            ], 403);
+        }
+
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+            return response()->json([
+                'success' => true,
+                'message' => 'تم التحقق من بريدك الإلكتروني.'
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'خطاء في التحقق من بريدك الإلكتروني.'
+        ], 500);
     }
 }
