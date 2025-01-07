@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -56,6 +57,16 @@ return Application::configure(basePath: dirname(__DIR__))
                     'error' => true,
                     'message' => 'يجب تسجيل الدخول أولاً'
                 ], 401);
+            }
+        });
+
+        # Handle InvalidSignatureException
+        $exceptions->render(function (InvalidSignatureException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'رابط التحقق غير صالح أو منتهي الصلاحية'
+                ], 400);
             }
         });
 
