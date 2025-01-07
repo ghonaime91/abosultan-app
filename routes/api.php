@@ -37,7 +37,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
         }
         $request->fulfill();
         return response()->json(['message' => 'تم التحقق من بريدك الإلكتروني بنجاح.']);
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         return response()->json(['error' => true, 'message' => $e->getMessage()], 401);
     }
 })->middleware(['signed'])->name('verification.verify');
