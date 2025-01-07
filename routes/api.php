@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -22,15 +23,13 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'يرجى التحقق من بريدك الإلكتروني.']);
     })->name('verification.notice');
 
-    Route::post('/email/verification-notification', function (Request $request) {
-        $request->user()->sendEmailVerificationNotification();
-
-        return response()->json(['message' => 'تم إرسال رابط التحقق!']);
-    })->middleware(['throttle:6,1'])->name('verification.send');
+    Route::post('/email/verification-notification',
+     [VerificationController::class, 'resendVerificationEmail']
+    )->middleware(['throttle:6,1'])->name('verification.send');
 });
 
 # Verify email route
-Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verifyEmail'])
     ->middleware(['signed'])
     ->name('verification.verify');
 
