@@ -70,7 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     # Reset password routes
     Route::post('/password/email', [PasswordController::class, 'sendResetLinkEmail'])
-    ->name('password.email');
+    ->name('password.reset');
 
  
     Route::post('/password/reset', [PasswordController::class, 'resetPassword'])
