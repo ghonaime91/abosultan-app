@@ -168,41 +168,50 @@ class AuthController extends Controller
 
     # Verify the user's email
     public function verify(Request $request)
-{
-    try {
-        // Find the user using the provided ID
-        $user = User::findOrFail($request->id);
+    {
+        try {
+            // Check if the signature is valid
+            if (!$request->hasValidSignature()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'رابط التحقق غير صالح أو منتهي الصلاحية.'
+                ], 400);
+            }
 
-        // Check if the email is already verified
-        if ($user->email_verified_at) {
+            // Find the user using the provided ID
+            $user = User::findOrFail($request->id);
+
+            // Check if the email is already verified
+            if ($user->email_verified_at) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'البريد الإلكتروني مفعل بالفعل.'
+                ], 200);
+            }
+
+            // Mark the email as verified
+            if ($user->markEmailAsVerified()) {
+                // Trigger the verified event after successful verification
+                event(new Verified($user));
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم التحقق من بريدك الإلكتروني بنجاح.'
+                ], 200);
+            }
+
+            // In case of an error during email verification
             return response()->json([
                 'success' => false,
-                'message' => 'البريد الإلكتروني مفعل بالفعل.'
-            ], 200);
-        }
+                'message' => 'حدث خطأ أثناء التحقق من بريدك الإلكتروني.'
+            ], 500);
 
-        // Mark the email as verified
-        if ($user->markEmailAsVerified()) {
-            // Trigger the verified event after successful verification
-            event(new Verified($user));
+        } catch (\Throwable $e) {
+            // Handle any exceptions and return a detailed error message
             return response()->json([
-                'success' => true,
-                'message' => 'تم التحقق من بريدك الإلكتروني بنجاح.'
-            ], 200);
+                'success' => false,
+                'message' => 'حدث خطأ أثناء العملية: ' . $e->getMessage()
+            ], 500);
         }
-
-        // In case of an error during email verification
-        return response()->json([
-            'success' => false,
-            'message' => 'حدث خطأ أثناء التحقق من بريدك الإلكتروني.'
-        ], 500);
-
-    } catch (\Throwable $e) {
-        // Handle any exceptions and return a detailed error message
-        return response()->json([
-            'success' => false,
-            'message' => 'حدث خطأ أثناء العملية: ' . $e->getMessage()
-        ], 500);
     }
-}
+
 }
