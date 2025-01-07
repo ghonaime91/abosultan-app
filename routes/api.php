@@ -26,16 +26,11 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'تم إرسال رابط التحقق!']);
     })->middleware(['throttle:6,1'])->name('verification.send');
 });
-
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     try {
-        $user = User::find($request->id);
-        $expires = $request->expires;
-        $signature = $request->signature;
-        if (!Hash::check($signature, $user->email_verification_hash . $expires)) {
-            throw new Exception('خطأ في رمز التحقق');
-        }
+        // تحقق البريد الإلكتروني
         $request->fulfill();
+
         return response()->json(['message' => 'تم التحقق من بريدك الإلكتروني بنجاح.']);
     } catch (\Throwable $e) {
         return response()->json(['error' => true, 'message' => $e->getMessage()], 401);
