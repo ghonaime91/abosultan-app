@@ -15,8 +15,20 @@ class VerificationController extends Controller
         try {
 
             // Find the user using the provided ID
-            $user = User::findOrFail($request->id);
+            $user = User::find($request->id);
 
+            // If the user doesn't exist return an error
+            if(!$user) {
+                return response()->json([
+
+                    'success' => false,
+
+                    'message' => 'المستخدم غير موجود.'
+
+                ], 404);
+            }
+
+            
             // Check if the email is already verified
             if ($user->email_verified_at) {
 
