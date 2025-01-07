@@ -26,14 +26,34 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'تم إرسال رابط التحقق!']);
     })->middleware(['throttle:6,1'])->name('verification.send');
 });
+
+
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     try {
-        // تحقق البريد الإلكتروني
+        // جلب المستخدم بناءً على المعرف
+        $user = User::find($request->route('id'));
+
+        // التحقق إذا كان المستخدم موجودًا
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'المستخدم غير موجود'
+            ], 404);
+        }
+
+        // تنفيذ التحقق
         $request->fulfill();
 
-        return response()->json(['message' => 'تم التحقق من بريدك الإلكتروني بنجاح.']);
+        return response()->json([
+            'success' => true,
+            'message' => 'تم التحقق من بريدك الإلكتروني بنجاح.'
+        ]);
     } catch (\Throwable $e) {
-        return response()->json(['error' => true, 'message' => $e->getMessage()], 401);
+        return response()->json([
+            'success' => false,
+            'message' => 'حدث خطأ أثناء التحقق',
+            'error' => $e->getMessage()
+        ], 500);
     }
 })->middleware(['signed'])->name('verification.verify');
 
