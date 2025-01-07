@@ -170,13 +170,6 @@ class AuthController extends Controller
     public function verify(Request $request)
     {
         try {
-            // Check if the signature is valid
-            if (!$request->hasValidSignature()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'رابط التحقق غير صالح أو منتهي الصلاحية.'
-                ], 400);
-            }
 
             // Find the user using the provided ID
             $user = User::findOrFail($request->id);
