@@ -21,10 +21,16 @@ class ResetPasswordNotification extends Notification
 
     public function toMail($notifiable)
     {
-        $resetUrl = url(config('app.url') . route('password.reset', ['token' => $this->token, 'email' => $notifiable->getEmailForPasswordReset()], false));
+        $resetUrl = url(config('app.url') . route('password.reset',
+         ['token' => $this->token, 'email' => $notifiable->getEmailForPasswordReset()],
+          false)
+        );
 
         return (new MailMessage)
             ->subject('إعادة تعيين كلمة المرور')
-            ->view('emails.reset_password', ['resetUrl' => $resetUrl]);
+            ->line('لقد طلبت إعادة تعيين كلمة المرور الخاصة بك.')
+            ->action('إعادة تعيين كلمة المرور', $resetUrl)
+            ->line('إذا لم تطلب إعادة تعيين كلمة المرور، يرجى تجاهل هذا البريد الإلكتروني.')
+            ->salutation('فريق الدعم');
     }
 }

@@ -65,4 +65,16 @@ class PasswordController extends Controller
             ], 500);
         }
     }
+
+
+    public function viewResetForm(Request $request)
+    {
+        return view(
+
+            'emails.reset-password',
+
+            ['token' => $request->token, 'email' => $request->email]
+
+        );
+    }
 }
