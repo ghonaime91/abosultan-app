@@ -28,10 +28,10 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $user = User::find($request->id);
-    $expires = $request->expires;
-    $signature = $request->signature;
     try {
+        $user = User::find($request->id);
+        $expires = $request->expires;
+        $signature = $request->signature;
         if (!Hash::check($signature, $user->email_verification_hash . $expires)) {
             throw new Exception('خطأ في رمز التحقق');
         }
