@@ -76,4 +76,13 @@ class VerificationController extends Controller
             ], 500);
         }
     }
+
+
+    # Verification notice
+    public function verificationNotice()
+    {
+        return response()->json([
+            'message' => 'يرجى التحقق من بريدك الإلكتروني.'
+        ]);
+    }
 }

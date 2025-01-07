@@ -1,14 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VerificationController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Auth\Events\Verified;
+
 
 /**
  * Auth routes start
@@ -18,17 +14,22 @@ use Illuminate\Auth\Events\Verified;
 Route::post('/register', [AuthController::class, 'register'])
     ->name('register');
 
+# Verify email routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/email/verify', function () {
-        return response()->json(['message' => 'يرجى التحقق من بريدك الإلكتروني.']);
-    })->name('verification.notice');
 
+    # Verify email notice
+    Route::get('/email/verify',[VerificationController::class, 'verificationNotice'])
+        ->name('verification.notice');
+
+    # Resend email verification notification
     Route::post('/email/verification-notification',
-     [VerificationController::class, 'resendVerificationEmail']
-    )->middleware(['throttle:6,1'])->name('verification.send');
+    [VerificationController::class, 'resendVerificationEmail'])
+        ->middleware(['throttle:6,1'])
+        ->name('verification.send');
+
 });
 
-# Verify email route
+# Verify email 
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verifyEmail'])
     ->middleware(['signed'])
     ->name('verification.verify');
