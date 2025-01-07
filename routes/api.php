@@ -30,7 +30,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     try {
-
         $user = User::where('id', $request->route('id'))->first();
         // التحقق إذا كان المستخدم موجودًا
         if (!$user) {
@@ -38,6 +37,14 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
                 'success' => false,
                 'message' => 'المستخدم غير موجود'
             ], 404);
+        }
+
+        // التحقق من صحة الطلب
+        if (!$request->hasValidSignature()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'رابط التحقق غير صالح أو منتهي الصلاحية'
+            ], 400);
         }
 
         // تنفيذ التحقق
