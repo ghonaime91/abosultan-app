@@ -30,51 +30,21 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    try {
-        $user = User::find($request->route('id'));
-        // التحقق إذا كان المستخدم موجودًا
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'المستخدم غير موجود'
-            ], 404);
-        }
+Route::get('/email/verify/{id}/{hash}', function (Request $request) {
+    $user = User::findOrFail($request->id);
 
-        // التحقق من صحة الطلب
-        if (!$request->hasValidSignature()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'رابط التحقق غير صالح أو منتهي الصلاحية'
-            ], 400);
-        }
-
-        // تسجيل دخول المستخدم مؤقتًا
-        Auth::login($user);
-
-        // تنفيذ التحقق
-        if ($user->hasVerifiedEmail()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'بريدك الإلكتروني تم التحقق منه مسبقًا.'
-            ]);
-        }
-
-        $user->markEmailAsVerified();
-        event(new Verified($user));
-
-        return response()->json([
-            'success' => true,
-            'message' => 'تم التحقق من بريدك الإلكتروني بنجاح.'
-        ]);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'حدث خطأ أثناء التحقق',
-            'error' => $e->getMessage()
-        ], 500);
+    if ($user->email_verified_at) {
+        return response()->json(['message' => 'البريد الإلكتروني مفعل بالفعل.']);
     }
-})->middleware(['signed'])->name('verification.verify');
+
+    if ($user->markEmailAsVerified()) {
+        event(new Verified($user));
+        return response()->json(['message' => 'تم التحقق من بريدك الإلكتروني.']);
+    }
+
+    return response()->json(['message' => 'خطاء في التحقق من بريدك الإلكتروني.']);
+    
+})->middleware(['signed','auth:sanctum'])->name('verification.verify');
 
 # Login route
 Route::post('/login', [AuthController::class, 'login'])
