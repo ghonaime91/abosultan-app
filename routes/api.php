@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Auth routes start
@@ -26,8 +28,13 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $user = User::find($request->id);
+    $expires = $request->expires;
+    $signature = $request->signature;
+    if (!Hash::check($signature, $user->email_verification_hash . $expires)) {
+        return response()->json(['message' => 'خطأ في رمز التحقق'], 401);
+    }
     $request->fulfill();
-
     return response()->json(['message' => 'تم التحقق من بريدك الإلكتروني بنجاح.']);
 })->middleware(['signed'])->name('verification.verify');
 
