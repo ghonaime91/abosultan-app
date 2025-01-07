@@ -30,9 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     try {
-        // جلب المستخدم بناءً على المعرف
-        $user = User::find($request->route('id'));
 
+        $user = User::where('id', $request->route('id'))->first();
         // التحقق إذا كان المستخدم موجودًا
         if (!$user) {
             return response()->json([
