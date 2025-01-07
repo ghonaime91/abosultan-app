@@ -61,7 +61,7 @@ class VerificationController extends Controller
             $user = User::findOrFail($request->id);
 
             // Send the email verification notification
-            $user->sendEmailVerificationNotification();
+            $request->user()->sendEmailVerificationNotification();
 
             // Prepare the response
             return response()->json([
