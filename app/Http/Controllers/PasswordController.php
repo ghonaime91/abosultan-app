@@ -71,7 +71,7 @@ class PasswordController extends Controller
     {
         return view(
 
-            'emails.reset-password',
+            'emails.reset_password',
 
             ['token' => $request->token, 'email' => $request->email]
 
