@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
 
 class AuthController extends Controller
 {
@@ -161,5 +162,36 @@ class AuthController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+
+
+    # Verify the user's email
+    public function verify(Request $request)
+    {
+
+        $user = User::findOrFail($request->id);
+    
+        if ($user->email_verified_at) {
+            return response()->json([
+                'success' => false,
+                'message' => 'البريد الإلكتروني مفعل بالفعل.'
+            ], 200);
+        }
+    
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+            return response()->json([
+                'success' => true,
+                'message' => 'تم التحقق من بريدك الإلكتروني.'
+            ], 200);
+        }
+    
+        return response()->json([
+            'success' => false,
+            'message' => 'خطاء في التحقق من بريدك الإلكتروني.'
+        ], 500);
+        
+
     }
 }

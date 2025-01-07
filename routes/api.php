@@ -30,21 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::get('/email/verify/{id}/{hash}', function (Request $request) {
-    $user = User::findOrFail($request->id);
-
-    if ($user->email_verified_at) {
-        return response()->json(['message' => 'البريد الإلكتروني مفعل بالفعل.']);
-    }
-
-    if ($user->markEmailAsVerified()) {
-        event(new Verified($user));
-        return response()->json(['message' => 'تم التحقق من بريدك الإلكتروني.']);
-    }
-
-    return response()->json(['message' => 'خطاء في التحقق من بريدك الإلكتروني.']);
-    
-})->middleware(['signed'])->name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->middleware(['signed'])->name('verification.verify');
 
 # Login route
 Route::post('/login', [AuthController::class, 'login'])
