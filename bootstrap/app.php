@@ -60,14 +60,14 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         # Handle general exceptions
-        $exceptions->render(function (Throwable $e, Request $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'خطأ في الخادم'
-                ], 500);
-            }
+        // $exceptions->render(function (Throwable $e, Request $request) {
+        //     if ($request->is('api/*')) {
+        //         return response()->json([
+        //             'error' => true,
+        //             'message' => 'خطأ في الخادم'
+        //         ], 500);
+        //     }
 
-        });    
+        // });    
 
     })->create();
