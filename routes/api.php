@@ -44,7 +44,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
 
     return response()->json(['message' => 'خطاء في التحقق من بريدك الإلكتروني.']);
     
-})->middleware(['signed','auth:sanctum'])->name('verification.verify');
+})->middleware(['signed'])->name('verification.verify');
 
 # Login route
 Route::post('/login', [AuthController::class, 'login'])
