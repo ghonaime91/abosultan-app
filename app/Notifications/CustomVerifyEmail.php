@@ -26,7 +26,11 @@ class CustomVerifyEmail extends Notification
         return URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(60),
-            ['id' => $notifiable->getKey(), 'hash' => sha1($notifiable->getEmailForVerification())]
+            [
+                'locale' => app()->getLocale(),
+                'id' => $notifiable->getKey(),
+                'hash' => sha1($notifiable->getEmailForVerification())
+                ]
         );
     }
 
