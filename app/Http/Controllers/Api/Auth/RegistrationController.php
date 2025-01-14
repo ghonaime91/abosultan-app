@@ -32,7 +32,9 @@ class RegistrationController extends Controller
                 event(new Registered($user));
     
                 // Create the sanctum token
-                $token = $user->createToken('MyApp')->plainTextToken;
+                $token = $user->createToken(
+                    $request->header('User-Agent')
+                    )->plainTextToken;
     
                 return response()->json([    
                     'success' => true,    

@@ -14,16 +14,16 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            // Validate the input data
+            # Validate the input data
             $fields = $request->validate([
                 'email'    => 'required|string|email',
                 'password' => 'required|string',
             ]);
 
-            // Check if the user exists
+            # Check if the user exists
             $user = User::where('email', $fields['email'])->first();
 
-            // Return an error response if user not found or password incorrect
+            # Return an error response if user not found or password incorrect
             if (!$user || !Hash::check($fields['password'], $user->password)) {
                 return response()->json([
                     'success' => false,
@@ -31,8 +31,16 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            // Create the sanctum login token
-            $token = $user->createToken('MyApp')->plainTextToken;
+            # Delete the existing token for the current device based on the User-Agent 
+            $user->tokens()->where(
+                'name',
+                $request->header('User-Agent')
+                )->delete();
+
+            # Create a new Sanctum login token associated with the current device
+            $token = $user->createToken(
+                $request->header('User-Agent')
+                )->plainTextToken;
 
             return response([
                 'success' => true,
