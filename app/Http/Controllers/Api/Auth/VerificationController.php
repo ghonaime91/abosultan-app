@@ -20,11 +20,8 @@ class VerificationController extends Controller
             // If the user doesn't exist return an error
             if(!$user) {
                 return response()->json([
-
                     'success' => false,
-
-                    'message' => 'المستخدم غير موجود.'
-
+                    'message' => __('messages.account_not_found')
                 ], 404);
             }
 
@@ -33,11 +30,8 @@ class VerificationController extends Controller
             if ($user->email_verified_at) {
 
                 return response()->json([
-
                     'success' => false,
-
-                    'message' => 'البريد الإلكتروني مفعل بالفعل.'
-
+                    'message' => __('messages.verified_already')
                 ], 200);
 
             }
@@ -49,33 +43,24 @@ class VerificationController extends Controller
                 event(new Verified($user));
 
                 return response()->json([
-
                     'success' => true,
-
-                    'message' => 'تم التحقق من بريدك الإلكتروني بنجاح.'
-
+                    'message' => __('messages.verified_success')
                 ], 200);
 
             }
 
             // In case of an error during email verification
             return response()->json([
-
                 'success' => false,
-
-                'message' => 'حدث خطأ أثناء التحقق من بريدك الإلكتروني.'
-
+                'message' => __('messages.verify_error')
             ], 500);
 
         } catch (\Throwable $e) {
 
             // Handle any exceptions and return a detailed error message
             return response()->json([
-
                 'success' => false,
-
-                'message' => 'حدث خطأ أثناء العملية: ' . $e->getMessage()
-
+                'message' => __('exceptions.internal_server_error')
             ], 500);
         }
     }
@@ -88,13 +73,9 @@ class VerificationController extends Controller
         try {
             // Check if the user's email is already verified
             if ($request->user()->hasVerifiedEmail()) {
-
                 return response()->json([
-
                     'success' => false,
-
-                    'message' => 'البريد الإلكتروني مفعل بالفعل.'
-
+                    'message' => __('messages.verified_already')
                 ], 200);
             }
 
@@ -103,21 +84,15 @@ class VerificationController extends Controller
 
             // Prepare the response
             return response()->json([
-
                 'success' => true,
-
                 'message' => 'تم إرسال رابط التحقق!'
-
             ], 200);
         } catch (\Throwable $e) {
 
             // Handle any exceptions and return a detailed error message
             return response()->json([
-
                 'success' => false,
-
-                'message' => 'حدث خطأ أثناء العملية: ' . $e->getMessage()
-
+                'message' => __('exceptions.internal_server_error')
             ], 500);
         }
     }

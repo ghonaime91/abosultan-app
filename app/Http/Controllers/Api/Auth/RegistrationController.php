@@ -15,10 +15,10 @@ class RegistrationController extends Controller
         public function register(RegistrationRequest $request)
         {
             try {
-                // Validate the input data with form request
+                # Validate the input data with form request
                 $fields = $request->validated();
 
-                // Create the user
+                # Create the user
                 $user = User::create([
                 'first_name' => $fields['first_name'],
                 'last_name'  => $fields['last_name'],
@@ -28,10 +28,10 @@ class RegistrationController extends Controller
                 'role'       => 'user'                
                 ]);
     
-                // Send email verification notification
+                # Send email verification notification
                 event(new Registered($user));
     
-                // Create the sanctum token
+                # Create the sanctum token
                 $token = $user->createToken(
                     $request->header('User-Agent')
                     )->plainTextToken;
@@ -45,7 +45,7 @@ class RegistrationController extends Controller
             }
 
             catch (\Exception $e) {    
-                // In case of any other error, return a general error response
+                # In case of any other error, return a general error response
                 return response()->json([    
                     'success' => false,   
                     'message' => __('exceptions.internal_server_error'),  

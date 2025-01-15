@@ -39,9 +39,11 @@ class CustomVerifyEmail extends Notification
         $verificationUrl = $this->verificationUrl($notifiable);
 
         return (new MailMessage)
-            ->subject('تأكيد البريد الإلكتروني')
-            ->line('يرجى الضغط على الزر أدناه لتأكيد بريدك الإلكتروني.')
-            ->action('تأكيد البريد الإلكتروني', $verificationUrl)
-            ->line('إذا لم تقم بإنشاء حساب، فلا حاجة لاتخاذ أي إجراء آخر.');
+            ->mailer('smtp')
+            ->subject(__('notifications.verify_subject'))
+            ->greeting(__('messages.email_greeting').$notifiable->first_name)
+            ->line(__('notifications.verify_line_1'))
+            ->action(__('notifications.verify_action'), $verificationUrl)
+            ->line(__('notifications.verify_line_2'));
     }
 }
