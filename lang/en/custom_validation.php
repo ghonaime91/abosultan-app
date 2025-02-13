@@ -19,6 +19,7 @@ return [
         'string'   => 'The email address must be a string.',
         'unique'   => 'Please choose another email address.',
         'regex'    => 'The email address format is invalid.',
+        'exists'   => 'This email is not found',
     ],
 
     'phone' => [
@@ -33,5 +34,10 @@ return [
         'confirmed' => 'The password confirmation does not match.',
         'min'       => 'The password must be at least 6 characters long.',
         'regex'     => 'The password must contain at least one uppercase letter and one special character such as @, $, %, &.',
+    ],
+
+    'otp' => [
+        'required' => 'The OTP code is required.',
+        'digits'   => 'The OTP code must be exactly 6 digits.',
     ],
 ];
