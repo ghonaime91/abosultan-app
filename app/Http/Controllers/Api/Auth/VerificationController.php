@@ -11,15 +11,15 @@ use App\Http\Controllers\Controller;
 class VerificationController extends Controller
 {
     
-    # Verify the user's email
+    // Verify the user's email
     public function verifyEmail(Request $request)
     {
         try {
 
-            # Find the user using the provided ID
+            // Find the user using the provided ID
             $user = User::find($request->id);
 
-            # If the user doesn't exist return an error
+            // If the user doesn't exist return an error
             if(!$user) {
                 return response()->json([
                     'success' => false,
@@ -28,7 +28,7 @@ class VerificationController extends Controller
             }
 
             
-            # Check if the email is already verified
+            // Check if the email is already verified
             if ($user->email_verified_at) {
 
                 return response()->json([
@@ -38,10 +38,10 @@ class VerificationController extends Controller
 
             }
 
-            # Mark the email as verified
+            // Mark the email as verified
             if ($user->markEmailAsVerified()) {
 
-                # Trigger the verified event after successful verification
+                // Trigger the verified event after successful verification
                 event(new Verified($user));
 
                 return response()->json([
@@ -51,7 +51,7 @@ class VerificationController extends Controller
 
             }
 
-            # In case of an error during email verification
+            // In case of an error during email verification
             return response()->json([
                 'success' => false,
                 'message' => __('messages.verify_error')
@@ -59,7 +59,7 @@ class VerificationController extends Controller
 
         } catch (\Throwable $e) {
 
-            # Handle any exceptions and return a detailed error message
+            // Handle any exceptions and return a detailed error message
             return response()->json([
                 'success' => false,
                 'message' => __('exceptions.internal_server_error')
@@ -69,11 +69,11 @@ class VerificationController extends Controller
 
 
 
-    # Resend the email verification notification
+    // Resend the email verification notification
     public function resendVerificationEmail(Request $request)
     {
         try {
-            # Check if the user's email is already verified
+            // Check if the user's email is already verified
             if ($request->user()->hasVerifiedEmail()) {
                 return response()->json([
                     'success' => false,
@@ -81,17 +81,17 @@ class VerificationController extends Controller
                 ], 200);
             }
 
-            # Send the email verification notification
+            // Send the email verification notification
             $request->user()->sendEmailVerificationNotification();
 
-            # Prepare the response
+            // Prepare the response
             return response()->json([
                 'success' => true,
                 'message' => 'تم إرسال رابط التحقق!'
             ], 200);
         } catch (\Throwable $e) {
 
-            # Handle any exceptions and return a detailed error message
+            // Handle any exceptions and return a detailed error message
             return response()->json([
                 'success' => false,
                 'message' => __('exceptions.internal_server_error')
@@ -100,7 +100,7 @@ class VerificationController extends Controller
     }
 
 
-    # Verification notice
+    // Verification notice
     public function verificationNotice()
     {
         return response()->json([

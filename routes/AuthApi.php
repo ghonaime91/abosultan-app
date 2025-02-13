@@ -8,38 +8,38 @@ use App\Http\Controllers\Api\Auth\PasswordController;
 
 Route::middleware('appLanguage')->prefix('{locale}')->group(function () {
 
-# Register a new user route
+// Register a new user route
 Route::post('/register', [RegistrationController::class, 'register'])
     ->name('register');
 
-# Login route
+// Login route
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 
-# Verify email routes
+// Verify email routes
 Route::middleware('auth:sanctum')->group(function () {
 
-    # Logout route
+    // Logout route
     Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
-    # Verify email notice
+    // Verify email notice
     Route::get('/email/verify',[VerificationController::class, 'verificationNotice'])
         ->name('verification.notice');
 
-    # Resend email verification notification
+    // Resend email verification notification
     Route::post('/email/verification-notification',
     [VerificationController::class, 'resendVerificationEmail'])
         ->middleware(['throttle:6,1'])
         ->name('verification.send');
 });
 
-# Verify email 
+// Verify email 
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verifyEmail'])
     ->middleware(['signed'])
     ->name('verification.verify');
 
-# Reset password routes
+// Reset password routes
 Route::post('/forgot-password/email', [PasswordController::class, 'sendResetLinkEmail'])
 ->name('password.reset');
 

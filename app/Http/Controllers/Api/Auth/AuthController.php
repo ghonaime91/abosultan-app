@@ -7,23 +7,21 @@ use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 
 class AuthController extends Controller
 {
-    # Login a user
-    public function login(Request $request)
+    // Login a user
+    public function login(LoginRequest $request)
     {
         try {
-            # Validate the input data
-            $fields = $request->validate([
-                'email'    => 'required|string|email',
-                'password' => 'required|string',
-            ]);
+            // Validate the input data
+            $fields = $request->validated();
 
-            # Check if the user exists
+            // Check if the user exists
             $user = User::where('email', $fields['email'])->first();
 
-            # Return an error response if user not found or password incorrect
+            // Return an error response if user not found or password incorrect
             if (!$user || !Hash::check($fields['password'], $user->password)) {
                 return response()->json([
                     'success' => false,
@@ -31,13 +29,13 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            # Delete the existing token for the current device based on the User-Agent 
+            // Delete the existing token for the current device based on the User-Agent 
             $user->tokens()->where(
                 'name',
                 $request->header('User-Agent')
                 )->delete();
 
-            # Create a new Sanctum login token associated with the current device
+            // Create a new Sanctum login token associated with the current device
             $token = $user->createToken(
                 $request->header('User-Agent')
                 )->plainTextToken;
@@ -69,7 +67,7 @@ class AuthController extends Controller
     }
 
 
-    # Logout the user
+    // Logout the user
     public function logout(Request $request)
     {
         try {
