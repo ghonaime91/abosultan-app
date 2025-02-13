@@ -7,6 +7,4 @@ return [
     "verified_already" => "The account is already verified.",
     "verified_success" => "The account has been successfully verified.",
     "verify_error" => "An error occurred while verifying the account.",
-    "email_greeting" => "Hello ",
-
 ];

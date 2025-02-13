@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Registered;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Auth\RegistrationRequest;
-
+use App\Notifications\EmailVerificationNotification;
 
 class RegistrationController extends Controller
 {
@@ -28,14 +28,16 @@ class RegistrationController extends Controller
                 'role'       => 'user'                
                 ]);
     
-                // Send email verification notification
-                event(new Registered($user));
-    
+                
+                
                 // Create the sanctum token
                 $token = $user->createToken(
                     $request->header('User-Agent')
                     )->plainTextToken;
-    
+
+                // Send email verification notification
+                $user->notify(new EmailVerificationNotification()); 
+                   
                 return response()->json([    
                     'success' => true,    
                     'message' => __('messages.account_created'),    

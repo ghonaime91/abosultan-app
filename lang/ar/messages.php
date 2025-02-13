@@ -7,6 +7,4 @@ return [
     "verified_already" => "الحساب مفعل من قبل بالفعل.",
     "verified_success" => "تم تفعيل الحساب بنجاح .",
     "verify_error" => "حدث خطأ أثناء التحقق من الحساب.",
-    "email_greeting" => "مرحبا ",
-
 ];
