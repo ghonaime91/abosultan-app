@@ -8,7 +8,6 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-
 class AuthController extends Controller
 {
     // Login a user
@@ -28,13 +27,10 @@ class AuthController extends Controller
                     'message' => __('auth.failed')
                 ], 401);
             }
-
-            // Delete the existing token for the current device based on the User-Agent 
-            $user->tokens()->where(
-                'name',
-                $request->header('User-Agent')
-                )->delete();
-
+            
+            // Delete the existing tokens 
+            $user->tokens()->delete();
+            
             // Create a new Sanctum login token associated with the current device
             $token = $user->createToken(
                 $request->header('User-Agent')
