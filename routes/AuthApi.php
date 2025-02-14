@@ -10,12 +10,10 @@ Route::middleware('appLanguage')->prefix('{locale}')->group(function () {
 
     // Register a new user route
     Route::post('/register', [RegistrationController::class, 'register'])
-        ->middleware('throttle:3,10')
         ->name('register');
 
     // Login route
     Route::post('/login', [AuthController::class, 'login'])
-        ->middleware('throttle:4,1')
         ->name('login');
 
     // Logout route
@@ -28,7 +26,7 @@ Route::middleware('appLanguage')->prefix('{locale}')->group(function () {
             ->name('email_verify');
 
         Route::post('/email/resend', [EmailVerificationController::class, 'resendVerificationEmail'])
-            ->middleware('throttle:2,1') 
+            ->middleware('throttle:4,1') 
             ->name('resend_email_verification');
 
         Route::get('/email/notice', [EmailVerificationController::class, 'verificationNotice'])
