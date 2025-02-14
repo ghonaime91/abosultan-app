@@ -22,9 +22,15 @@ Route::middleware('appLanguage')->prefix('{locale}')->group(function () {
 
     // Verify email routes
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/email/verify', [EmailVerificationController::class, 'verifyEmail']);
-        Route::post('/email/resend', [EmailVerificationController::class, 'resendVerificationEmail']);
-        Route::get('/email/notice', [EmailVerificationController::class, 'verificationNotice']);
+        Route::post('/email/verify', [EmailVerificationController::class, 'verifyEmail'])
+            ->name('email_verify');
+
+        Route::post('/email/resend', [EmailVerificationController::class, 'resendVerificationEmail'])
+            ->middleware('throttle:6,1') 
+            ->name('resend_email_verification');
+
+        Route::get('/email/notice', [EmailVerificationController::class, 'verificationNotice'])
+            ->name('email_verify_notify');
     });
 
 
